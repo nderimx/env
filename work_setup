@@ -12,7 +12,7 @@ echo "export PATH=\$PATH:\$GOBIN" >> ~/.bashrc
 
 echo "if [[ \$(ps aux | grep -c ssh) -ne 2]]; then
 	eval \"\$(ssh-agent -s)\"
-	ssh add ~/.ssh/id
+	ssh-add ~/.ssh/id
 	echo \"Knock, knock, $USER.\"
 else
 	echo \"Follow the white rabbit.\"
