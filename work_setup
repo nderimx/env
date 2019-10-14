@@ -18,6 +18,8 @@ else
 	echo \"Follow the white rabbit.\"
 fi" >> ~/.bashrc
 
+echo `git config --global user.signingkey FAF990AE928DD298977187F6BE7AF176AAFB958F`
+
 source ~/.bashrc
 
 go get github.com/DATA-DOG/godog/cmd/godog
