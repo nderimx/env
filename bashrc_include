@@ -23,12 +23,10 @@ if [ -f $u_home_path/apps/vpn ] && [ ! $vpn_status = Running ] && [ -f $u_home_p
 	sudo ifconfig $net_interface up
 
 	echo "Your new mac address is: $(ifconfig $net_interface | grep ether | awk '{print $2}')"
-	export MAC_CONFIG_ACTIVE=t
 
 	#connect to vpn
 	sudo bash $u_home_path/apps/vpn -d
 	sudo bash $u_home_path/apps/vpn -c
-	export VPN_CONFIG_ACTIVE=t
 	echo "Knock, knock, $USER."
 else
 	echo "Follow the white rabbit."
