@@ -1,45 +1,38 @@
 #!/bin/bash
-
-sudo apt-get update -qq && sudo apt-get install -qq curl && sudo apt-get install -qq git
-# sudo apt-get install -y pkg-config
-curl -O https://dl.google.com/go/go1.13.1.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.13.1.linux-amd64.tar.gz
-rm go1.13.1.linux-amd64.tar.gz
-echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
-echo "export GOPATH=\$HOME/go" >> ~/.bashrc
-echo "export GOBIN=\$GOPATH/bin" >> ~/.bashrc
-echo "export PATH=\$PATH:\$GOBIN" >> ~/.bashrc
-
-echo "if [[ \$(ps aux | grep -c ssh-agent) -ne 2 ]]; then
-	eval \"\$(ssh-agent -s)\"
-	ssh-add ~/.ssh/id
-	echo \"Knock, knock, $USER.\"
+if [ $# -eq 0 ]; then
+	echo "No arguments supplied. First argument is your custom home path"
+	exit 1
+fi
+# this script assumes the directory u_home_path to have these sub directories: keys, apps, lists.
+# u_home_path/keys should contain "id" (ssh key) and "gpgid.asc" (gpg key).
+# u_home_path/apps should contain "vpn" (vpn script) and "go1.xx.x.linux-amd64.tar.gz" (golang installer)
+# u_home_path/lists should contain https://gist.githubusercontent.com/aallan/b4bb86db86079509e6159810ae9bd3e4/raw/846ae1b646ab0f4d646af9115e47365f4118e5f6/mac-vendor.txt
+u_home_path=$1
+sudo apt-get update -y && sudo apt-get install -y curl && sudo apt-get install -y git && sudo apt-get install -y net-tools
+gofile="go1.13.1.linux-amd64.tar.gz"
+if [ $GOPATH ]; then
+	echo "GOPATH already set. Assuming go is installed"
 else
-	echo \"Follow the white rabbit.\"
-fi" >> ~/.bashrc
-
-echo `git config --global user.signingkey FAF990AE928DD298977187F6BE7AF176AAFB958F`
-
+	if [ -f $u_home_path/apps/$gofile ]; then
+		sudo tar -C /usr/local -xzf $u_home_path/apps/$gofile
+	else
+		curl -O https://dl.google.com/go/$gofile
+		sudo tar -C /usr/local -xzf $gofile
+		rm $gofile
+	fi
+	echo "
+export PATH=\$PATH:/usr/local/go/bin
+export GOPATH=\$HOME/go
+export GOBIN=\$GOPATH/bin
+export PATH=\$PATH:\$GOBIN
+" >> ~/.bashrc
+fi
+test ! $(gpg -k | sed -n '4p') && gpg --import $u_home_path/keys/gpgid.asc
+echo "Configuring VPN now."
+sudo bash $u_home_path/apps/vpn --init
+! grep -q u_home_path= ~/.bashrc && test -f bashrc_include && echo "u_home_path=$u_home_path" >> ~/.bashrc && cat bashrc_include >> ~/.bashrc && echo "bashrc successfully updated"
 source ~/.bashrc
 
 go get github.com/DATA-DOG/godog/cmd/godog
 go get github.com/gorilla/mux
-# go get github.com/sevlyar/go-daemon
 go get github.com/go-sql-driver/mysql
-go get github.com/multiformats/go-multihash
-go get github.com/ipfs/go-ipfs
-
-ipfs init
-ipfs daemon&
-
-go get -u github.com/whyrusleeping/gx-go
-go get -u github.com/whyrusleeping/gx
-cd $GOPATH/src/github.com/ipfs/go-ipfs
-gx i
-# sudo apt install libsdl2{,-image,-mixer,-ttf,-gfx}-dev
-# go get -v github.com/veandco/go-sdl2/{sdl,img,mix,ttf}
-
-# go get -v github.com/sqs/goreturns
-# go get -v github.com/uudashr/gopkgs/cmd/gopkgs
-# go get -v github.com/nsf/gocode
-

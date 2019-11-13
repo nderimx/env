@@ -1,0 +1,36 @@
+
+if [[ $(ps aux | grep -c ssh-agent) -ne 3 ]] && [ -f $u_home_path/keys/id ]; then
+	sudo chmod 700 $u_home_path/keys/id
+	eval "$(ssh-agent -s)"
+	ssh-add $u_home_path/keys/id
+fi
+
+git config --global user.signingkey $(gpg -k | sed -n '4p' | awk '{print $1}')
+
+vpn_status="$(bash $u_home_path/apps/vpn --status | grep OpenVPN | awk -F ": " '{print $2}'| awk '{print $1}')"
+if [ -f $u_home_path/apps/vpn ] && [ ! $vpn_status = Running ] && [ -f $u_home_path/lists/mac-vendor.txt ]; then
+	net_interface=$(route | grep default | awk '{print $NF}')
+	echo "Your starting mac address is: $(ifconfig $net_interface | grep ether | awk '{print $2}')"
+	rand_line=$((1 + $RANDOM * $RANDOM % 23053))
+	letter_p=p
+	mac_vendor=$(sed -n "$rand_line$letter_p" < $u_home_path/lists/mac-vendor.txt | awk '{print $1}')
+	random_mac_suffix=$(echo "obase=16; $(($RANDOM * $RANDOM % 16777216))" | bc)
+	formatted_mac=$(echo $mac_vendor$random_mac_suffix | sed 's/.\{2\}/&:/g;s/:$//')
+
+	sudo ifconfig $net_interface down
+	sudo ifconfig $net_interface hw ether $formatted_mac
+	sleep 6
+	sudo ifconfig $net_interface up
+
+	echo "Your new mac address is: $(ifconfig $net_interface | grep ether | awk '{print $2}')"
+	export MAC_CONFIG_ACTIVE=t
+
+	#connect to vpn
+	sudo bash $u_home_path/apps/vpn -d
+	sudo bash $u_home_path/apps/vpn -c
+	export VPN_CONFIG_ACTIVE=t
+	echo "Knock, knock, $USER."
+else
+	echo "Follow the white rabbit."
+fi
+sudo -k
