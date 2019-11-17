@@ -8,7 +8,7 @@ fi
 # u_home_path/apps should contain "vpn" (vpn script) and "go1.xx.x.linux-amd64.tar.gz" (golang installer)
 # u_home_path/lists should contain https://gist.githubusercontent.com/aallan/b4bb86db86079509e6159810ae9bd3e4/raw/846ae1b646ab0f4d646af9115e47365f4118e5f6/mac-vendor.txt
 u_home_path=$1
-sudo apt-get update -y && sudo apt-get install -y curl && sudo apt-get install -y git && sudo apt-get install -y net-tools
+sudo apt-get update -y && sudo apt-get install -y curl && sudo apt-get install -y git && sudo apt-get install -y net-tools && sudo apt-get install openvpn && sudo apt-get install dialog
 gofile="go1.13.1.linux-amd64.tar.gz"
 if [ $GOPATH ]; then
 	echo "GOPATH already set. Assuming go is installed"
