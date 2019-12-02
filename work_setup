@@ -31,6 +31,9 @@ test ! $(gpg -k | sed -n '4p') && gpg --import $u_home_path/keys/gpgid.asc
 echo "Configuring VPN now."
 sudo bash $u_home_path/apps/vpn --init
 ! grep -q u_home_path= ~/.bashrc && test -f bashrc_include && echo "u_home_path=$u_home_path" >> ~/.bashrc && cat bashrc_include >> ~/.bashrc && echo "bashrc successfully updated"
+
+sudo chmod 644 ~/.gnupg/trustdb.gpg
+sudo chmod 600 $u_home_path/keys/*
 source ~/.bashrc
 
 go get github.com/DATA-DOG/godog/cmd/godog
