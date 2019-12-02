@@ -1,6 +1,5 @@
 
 if [[ $(ps aux | grep -c ssh-agent) -ne 3 ]] && [ -f $u_home_path/keys/id ]; then
-	sudo chmod 700 $u_home_path/keys/id
 	eval "$(ssh-agent -s)"
 	ssh-add $u_home_path/keys/id
 fi
