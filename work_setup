@@ -27,6 +27,10 @@ export GOBIN=\$GOPATH/bin
 export PATH=\$PATH:\$GOBIN
 " >> ~/.bashrc
 fi
+
+# rust
+test ! $(command -v cargo) && $(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh)
+
 test ! $(gpg -k | sed -n '4p') && gpg --import $u_home_path/keys/gpgid.asc
 echo "Configuring VPN now."
 sudo bash $u_home_path/apps/vpn --init
