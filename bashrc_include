@@ -31,3 +31,26 @@ else
 	echo "Follow the white rabbit."
 fi
 sudo -k
+
+###32bit ubuntu 16
+#vpn_status="$(protonvpn s | grep Status: | awk -F ": " '{print $2}'| awk '{print $1}')"
+#if [[ $(protonvpn -v) ]] && [ ! $vpn_status = Connected ] && [ -f $u_home_path/lists/mac-vendor.txt ]; then
+	##net_interface=$(route | grep "*" | awk '{print $NF}' | sed -n '1p')
+	##echo "Your starting mac address is: $(ifconfig $net_interface | grep HWaddr | awk '{print $NF}')"
+	##rand_line=$((1 + $RANDOM * $RANDOM % 23053))
+	##letter_p=p
+	##mac_vendor=$(sed -n "$rand_line$letter_p" < $u_home_path/lists/mac-vendor.txt | awk '{print $1}')
+	##random_mac_suffix=$(echo "obase=16; $(($RANDOM * $RANDOM % 16777216))" | bc)
+	##formatted_mac=$(echo $mac_vendor$random_mac_suffix | sed 's/.\{2\}/&:/g;s/:$//')
+
+	##sudo ifconfig $net_interface down
+	##sudo ifconfig $net_interface hw ether $formatted_mac
+	##sleep 6
+	##sudo ifconfig $net_interface up
+
+	##echo "Your new mac address is: $(ifconfig $net_interface | grep ether | awk '{print $2}')"
+
+	###connect to vpn
+	#sudo protonvpn d
+	#sudo protonvpn c -f -p tcp
+	#echo "Knock, knock, $USER."
